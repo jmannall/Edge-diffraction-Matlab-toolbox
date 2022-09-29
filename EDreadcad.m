@@ -268,12 +268,15 @@ planenames = zeros(nplanes,30);
 planeabstypes = zeros(nplanes,6);
 
 for ii = 1:nplanes
-    listofplanes = EDextrnums(Str{ii});
-    ncornersperplanevec(ii) = length(listofplanes);
+    [listofplanes, checknplanes] = deal(EDextrnums(Str{ii}));
+    checknplanes(checknplanes>1) = 1;
+    ncornersperplanevec(ii) = sum(checknplanes);
+    %ncornersperplanevec(ii) = length(listofplanes);
+
     if ncornersperplanevec(ii) > size(planecorners,2)
        planecorners = [planecorners zeros(nplanes, ncornersperplanevec(ii)-size(planecorners,2))];
     end
-    planecorners(ii,1:ncornersperplanevec(ii)) = listofplanes;
+    planecorners(ii,1:ncornersperplanevec(ii)) = listofplanes(1:ncornersperplanevec(ii));
 
     txtstr2 = Str2{ii};
     if length(txtstr2) > size(planenames,2)

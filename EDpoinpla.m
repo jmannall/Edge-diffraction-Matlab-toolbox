@@ -203,7 +203,7 @@ if nposs>0
             disp(['            ',int2str(length(xysubset)),' xy-projected points:'])
         end
         
-        numberofedgestocheck = ncornersperplanevec(planelist(xysubset));    
+        numberofedgestocheck = ncornersperplanevec(planelist(xysubset));
         edgenumbers = unique(numberofedgestocheck);
 
         % 8 June 2022 We create subsubsets as cells, one for each value in

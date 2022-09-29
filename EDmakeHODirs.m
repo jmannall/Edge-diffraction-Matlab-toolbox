@@ -370,7 +370,7 @@ for isou = 1:nsources
     
 end
 
-if savealldifforders == 1
+if savealldifforders == 1 && exist('irhod', 'var')
     nirlength = 0;
    for ii = 2:difforder
        nnew = size(irhod{ii},1);
@@ -389,6 +389,8 @@ if savealldifforders == 1
            end
        end
    end
-   
-   
+else
+    for ii = 1:difforder
+        irhod{ii} = [];
+    end
 end
