@@ -509,27 +509,28 @@ clear mask
 % NB!!!!! Double check if the test below should be reversed for interior problems!!!
 % PS 2011-05-27
 
+edgesatplane = edgedata.edgesatplane;
 ivplaneswindents = find(planedata.planehasindents);
 if ~isempty(ivplaneswindents)
    uppertri_planeseesplane = triu(planedata.planeseesplane);
    for ii = 1:length(ivplaneswindents)
         indpl = ivplaneswindents(ii);
         disp(['Plane ',int2str(indpl),' has ind'])
-        edgelist = edgesatplane(indpl,:);
-        connplanes = planesatedge(edgelist,:);
+        edgelist = edgedata.edgesatplane(indpl,:);
+        connplanes = edgedata.planesatedge(edgelist,:);
         connplanes = reshape(connplanes,size(connplanes,1)*size(connplanes,2),1);
         connplanes = setdiff(connplanes,indpl);
         for jj = 1:length(connplanes)
 
             % First find connected plane-pairs that see each other. Their
             % edges can not see each other.
-            planepairs = connplanes(uppertri_planeseesplane(connplanes(jj),connplanes));
+            planepairs = connplanes(uppertri_planeseesplane(connplanes(jj),connplanes) == 1);
             if ~isempty(planepairs)
                 for kk = 1:length(planepairs)
                     edge1 = intersect(edgesatplane(connplanes(jj),:),edgesatplane(indpl,:));
                     edge2 = intersect(edgesatplane(planepairs(kk),:),edgesatplane(indpl,:));
-                    edgeseesedge(edge1,edge2) = 0;
-                    edgeseesedge(edge2,edge1) = 0;
+                    edgeseesedge(edge1,edge2) = 1;
+                    edgeseesedge(edge2,edge1) = 1;
                     
                 end
             end            
@@ -547,10 +548,10 @@ if ~isempty(ivplaneswindents)
             planepairs = connplanes([A2sort(ivnodiffs) A2sort(ivnodiffs+1)]);
             if ~isempty(planepairs)
                 for kk = 1:length(planepairs)
-                    edge1 = intersect(edgesatplane(planepairs(kk,1),:),edgesatplane(indpl,:));
-                    edge2 = intersect(edgesatplane(planepairs(kk,2),:),edgesatplane(indpl,:));
-                    edgeseesedge(edge1,edge2) = 0;
-                    edgeseesedge(edge2,edge1) = 0;
+                    edge1 = intersect(edgedata.edgesatplane(planepairs(kk,1),:),edgedata.edgesatplane(indpl,:));
+                    edge2 = intersect(edgedata.edgesatplane(planepairs(kk,2),:),edgedata.edgesatplane(indpl,:));
+                    edgeseesedge(edge1,edge2) = 1;
+                    edgeseesedge(edge2,edge1) = 1;
                     
                 end
             end            
@@ -573,6 +574,12 @@ for ii = 1:length(iv)
    % Find the in-plane edge normal vectors
    edgenormvecs = zeros(nedges,3);
    
+   ncornersperplanevec = planedata.ncornersperplanevec;
+   planecorners = planedata.planecorners;
+   corners = planedata.corners;
+   edgecorners = edgedata.edgecorners;
+   edgestartcoords = edgedata.edgestartcoords;
+   edgeendcoords = edgedata.edgeendcoords;
    for kk = 1:ncornersperplanevec(jj)
       co1 = planecorners(jj,kk);
       if kk+1<=ncornersperplanevec(jj)
@@ -624,6 +631,7 @@ for ii = 1:length(iv)
    combinededgetoedgerelation = sign(edgetoedgerelation + edgetoedgerelation.');
    
    % Step 1: check all pairs with -1
+   closwedangvec = edgedata.closwedangvec;
    for kk = 1:nedges_at_plane
        edge1 = listofedges(kk);
        iv = find(combinededgetoedgerelation(kk,:)==-1);
@@ -1352,6 +1360,7 @@ if difforder >= 2 && ~isempty(edgeseespartialedge)
     % those for which edges are aligned with each other (same zstart and
     % zend): only the closest of those should be kept!
     
+    edgelengthvec = edgedata.edgelengthvec;
     for ii = ivedges
        if any( planehascoplanar(edgedata.planesatedge(1,:)) )
 

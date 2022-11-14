@@ -94,6 +94,7 @@ end
 
 t00 = clock;
 
+% firstorderpathdata.ncomponents(2) = 0;
 if firstorderpathdata.ncomponents(2) > 0
 
     ncomponents = size(firstorderpathdata.specrefllist(:,1),1);
@@ -166,6 +167,7 @@ t00 = clock;
 % alldists, allslotnumberfracs, allamps. allslotnumbers will be matrices 
 % of size [nreceivers,nsources]
 
+firstorderpathdata.ncomponents(1) = 0;
 if firstorderpathdata.ncomponents(1) > 0
     ncomponents = size(firstorderpathdata.directsoundlist(:,1),1);
 
